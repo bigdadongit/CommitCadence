@@ -7,6 +7,10 @@ CommitCadence is a simple tool for creating custom patterns on your GitHub contr
 
 The grid editor allows you to select commit intensity per day and preview how the pattern will appear on your GitHub contribution calendar.
 
+![CommitCadence Demo](docs/demo.gif)
+
+![CommitCadence Grid Reference](docs/grid.png)
+
 ## Features
 
 - Visual grid editor matching GitHub's contribution calendar

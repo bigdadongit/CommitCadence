@@ -6,7 +6,7 @@
 echo "Starting to create commits from your design..."
 echo ""
 
-# Verify git configuration
+# Get the configured email from git config
 CONFIGURED_EMAIL=$(git config user.email)
 CONFIGURED_NAME=$(git config user.name)
 
@@ -14,11 +14,19 @@ if [ -z "$CONFIGURED_EMAIL" ]; then
     echo "⚠️  Warning: No email configured!"
     read -p "Enter your GitHub email: " CONFIGURED_EMAIL
     git config user.email "$CONFIGURED_EMAIL"
-    git config user.name "$CONFIGURED_EMAIL"
+    CONFIGURED_NAME="${CONFIGURED_EMAIL%%@*}"
+    git config user.name "$CONFIGURED_NAME"
 fi
 
 echo "Using email: $CONFIGURED_EMAIL"
+echo "Using name: $CONFIGURED_NAME"
 echo ""
+
+# Export these so they're used for ALL commits
+export GIT_AUTHOR_EMAIL="$CONFIGURED_EMAIL"
+export GIT_AUTHOR_NAME="$CONFIGURED_NAME"
+export GIT_COMMITTER_EMAIL="$CONFIGURED_EMAIL"
+export GIT_COMMITTER_NAME="$CONFIGURED_NAME"
 
 COMMIT_COUNT=0
 
@@ -45,8 +53,13 @@ do
 				for i in $( eval echo {1..$I} )
       			do
       				echo "$i on $D/$M/$Y" > commit.md
+        			# Set both date AND email/name for this commit
         			export GIT_COMMITTER_DATE="$Y-$M-$D 12:$i:00"
         			export GIT_AUTHOR_DATE="$Y-$M-$D 12:$i:00"
+        			export GIT_COMMITTER_EMAIL="$CONFIGURED_EMAIL"
+        			export GIT_COMMITTER_NAME="$CONFIGURED_NAME"
+        			export GIT_AUTHOR_EMAIL="$CONFIGURED_EMAIL"
+        			export GIT_AUTHOR_NAME="$CONFIGURED_NAME"
         			git add commit.md -f
         			git commit --date="$Y-$M-$D 12:0$i:00" -m "$i on $M $D $Y"
         			COMMIT_COUNT=$((COMMIT_COUNT + 1))

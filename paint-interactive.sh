@@ -6,6 +6,20 @@
 echo "Starting to create commits from your design..."
 echo ""
 
+# Verify git configuration
+CONFIGURED_EMAIL=$(git config user.email)
+CONFIGURED_NAME=$(git config user.name)
+
+if [ -z "$CONFIGURED_EMAIL" ]; then
+    echo "⚠️  Warning: No email configured!"
+    read -p "Enter your GitHub email: " CONFIGURED_EMAIL
+    git config user.email "$CONFIGURED_EMAIL"
+    git config user.name "$CONFIGURED_EMAIL"
+fi
+
+echo "Using email: $CONFIGURED_EMAIL"
+echo ""
+
 COMMIT_COUNT=0
 
 while read line	 

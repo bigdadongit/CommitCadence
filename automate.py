@@ -141,16 +141,22 @@ def create_commits(email, repo_name, repo_url, dates_file):
         readme_path = temp_dir / "README.md"
         readme_path.write_text(f"# {repo_name}\n")
         
+        # Step 3: Configure git email BEFORE any commits
+        print("\nStep 3: Configuring Git")
+        run_command(["git", "config", "user.email", email], cwd=str(temp_dir))
+        run_command(["git", "config", "user.name", email.split('@')[0]], cwd=str(temp_dir))
+        print(f"Git configured with email: {email}")
+        
+        # Now make the initial commit with the correct email
         run_command(["git", "add", "README.md"], cwd=str(temp_dir))
         run_command(["git", "commit", "-m", "Initial commit"], cwd=str(temp_dir))
         run_command(["git", "remote", "add", "origin", repo_url], cwd=str(temp_dir))
         
         print("Repository initialized!")
         
-        # Step 3: Configure git email
-        print("\nStep 3: Configuring Git")
-        run_command(["git", "config", "--local", "user.email", email], cwd=str(temp_dir))
-        print(f"Git configured with email: {email}")
+        # Verify the configuration
+        configured_email = run_command(["git", "config", "user.email"], cwd=str(temp_dir))
+        print(f"✓ Verified - commits will be made with: {configured_email}")
         
         # Copy necessary files
         print("\nStep 5: Applying Your Design")

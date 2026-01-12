@@ -55,20 +55,26 @@ REPO_PATH="/tmp/commitcadence-$REPO_NAME-$$"
 echo "Creating temporary repository at: $REPO_PATH"
 mkdir -p "$REPO_PATH"
 cd "$REPO_PATH"
+
+# Step 3: Configure git email BEFORE any commits
+echo ""
+echo "Step 3: Configuring Git"
 git init
+git config user.email "$GITHUB_EMAIL"
+git config user.name "${GITHUB_EMAIL%%@*}"
+echo "Git configured with email: $GITHUB_EMAIL"
+
+# Verify configuration
+CONFIGURED_EMAIL=$(git config user.email)
+echo "✓ Verified - commits will be made with: $CONFIGURED_EMAIL"
+
+# Now make initial commit
 echo "# $REPO_NAME" > README.md
 git add README.md
 git commit -m "Initial commit"
 git remote add origin "$REMOTE_URL"
 
 echo "Repository initialized!"
-
-# Step 3: Configure git email for the repository
-echo ""
-echo "Step 3: Configuring Git"
-cd "$REPO_PATH"
-git config --local user.email "$GITHUB_EMAIL"
-echo "Git configured with email: $GITHUB_EMAIL"
 
 # Step 4: Launch the designer
 echo ""
